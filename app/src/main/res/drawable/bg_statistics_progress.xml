@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền là phần Chi tiêu (Màu đỏ/Màu Expense) -->
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="6dp" />
+            <solid android:color="@color/color_expense" />
+        </shape>
+    </item>
+    
+    <!-- Tiển trình là phần Thu nhập (Màu xanh/Màu Income) -->
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <shape>
+                <corners android:radius="6dp" />
+                <solid android:color="@color/color_income" />
+            </shape>
+        </scale>
+    </item>
+</layer-list>

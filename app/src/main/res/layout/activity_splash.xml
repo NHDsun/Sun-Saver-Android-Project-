@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFBF2"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Sun Saver Graphic Logo -->
+        <ImageView
+            android:id="@+id/img_logo"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@drawable/ic_sun"
+            android:contentDescription="Sun Saver App Logo"
+            android:layout_marginBottom="24dp" />
+
+        <!-- App Name with bold sun-orange text -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sun Saver"
+            android:textColor="#E65100"
+            android:textSize="36sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="-0.02" />
+
+        <!-- Description/Slogan -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quản lý chi tiêu cá nhân thông minh"
+            android:textColor="#546E7A"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Mini credit loading indicator -->
+        <ProgressBar
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="48dp"
+            android:indeterminateTint="#FF8C00" />
+            
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:text="Khởi động Sun Saver..."
+        android:textColor="#78909C"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif-condensed" />
+
+</RelativeLayout>

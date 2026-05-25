@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_light">
+
+    <!-- TOOLBAR CUSTOM -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/card_bg_light"
+        android:elevation="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="Quay lại"
+            app:tint="@color/text_primary_light" />
+
+        <TextView
+            android:id="@+id/tv_title_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Thêm giao dịch"
+            android:textColor="@color/text_primary_light"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- NÚT XOÁ CHO BẢN CẬP NHẬT TRONG CHẾ ĐỘ SỬA -->
+        <ImageButton
+            android:id="@+id/btn_delete_top"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Xoá giao dịch"
+            android:visibility="gone"
+            app:tint="@color/color_expense" />
+
+    </RelativeLayout>
+
+    <!-- NỘI DUNG FORM NHẬP -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- LOẠI GIAO DỊCH: THU NHẬP / CHI TIÊU TO RÕ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LOẠI GIAO DỊCH"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:letterSpacing="0.1" />
+
+            <RadioGroup
+                android:id="@+id/rg_type"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_form_radio_group"
+                android:padding="4dp">
+
+                <RadioButton
+                    android:id="@+id/rb_expense"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_expense_tab"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:text="Chi tiêu 💸"
+                    android:textAlignment="center"
+                    android:textColor="@drawable/selector_tab_text"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_income"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/selector_income_tab"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:text="Thu nhập 💰"
+                    android:textAlignment="center"
+                    android:textColor="@drawable/selector_tab_text"
+                    android:textStyle="bold"
+                    android:textSize="14sp" />
+
+            </RadioGroup>
+
+            <!-- CARD CHỨA THÔNG TIN CHI TIẾT -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="@color/card_bg_light"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <!-- TÊN GIAO DỊCH -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TÊN GIAO DỊCH / NỘI DUNG"
+                        android:textColor="@color/text_secondary_light"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <EditText
+                        android:id="@+id/edt_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Ví dụ: Ăn cơm trưa, Nhận học bổng..."
+                        android:textColorHint="@color/text_secondary_light"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="15sp"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:maxLines="1"
+                        android:inputType="textCapSentences" />
+
+                    <!-- SỐ TIỀN (VND) -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SỐ TIỀN (VNĐ)"
+                        android:textColor="@color/text_secondary_light"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <EditText
+                        android:id="@+id/edt_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="Nhập số tiền..."
+                        android:textColorHint="@color/text_secondary_light"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:maxLines="1"
+                        android:inputType="number" />
+
+                    <!-- DANH MỤC PHÂN LOẠI -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DANH MỤC"
+                        android:textColor="@color/text_secondary_light"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <!-- Khung bao bọc Spinner để hiển thị viền bo góc đẹp -->
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/bg_input_field">
+
+                        <Spinner
+                            android:id="@+id/spinner_category"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="8dp"
+                            android:spinnerMode="dropdown" />
+                    </FrameLayout>
+
+                    <!-- NGÀY GIAO DỊCH -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NGÀY THỰC HIỆN"
+                        android:textColor="@color/text_secondary_light"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <EditText
+                        android:id="@+id/edt_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/bg_input_field"
+                        android:focusable="false"
+                        android:hint="Chọn ngày..."
+                        android:textColorHint="@color/text_secondary_light"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="14sp"
+                        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- LƯU DỮ LIỆU BUTTON -->
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:backgroundTint="@color/primary"
+                android:text="LƯU GIAO DỊCH ☀️"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:elevation="4dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="16dp" />
+
+            <!-- NÚT XOÁ GIAO DỊCH DÀNH CHO KHU VỰC CHỈNH SỬA (NẾU CÓ) -->
+            <Button
+                android:id="@+id/btn_delete_form"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/color_expense_light"
+                android:text="XOÁ GIAO DỊCH NÀY 🗑️"
+                android:textColor="@color/color_expense"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:visibility="gone"
+                app:cornerRadius="16dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

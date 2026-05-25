@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Mode Colors -->
+    <color name="bg_light">#121212</color>          <!-- Dark background -->
+    <color name="card_bg_light">#1E1E1E</color>     <!-- Dark slate card background -->
+    <color name="text_primary_light">#ECEFF1</color>
+    <color name="text_secondary_light">#B0BEC5</color>
+    <color name="divider_light">#2C2C2C</color>
+</resources>

@@ -1,0 +1,6 @@
+{
+  "name": "Sun Saver",
+  "description": "A simple Java and SQLite-based personal finance manager designed for students and beginners.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- State focused: Orange stroke -->
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="12dp" />
+            <stroke
+                android:width="2dp"
+                android:color="@color/primary" />
+        </shape>
+    </item>
+    <!-- Default state: Subdued stroke -->
+    <item>
+        <shape>
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="12dp" />
+            <stroke
+                android:width="1dp"
+                android:color="#CBD5E1" /> <!-- Slate-300 -->
+        </shape>
+    </item>
+</selector>
