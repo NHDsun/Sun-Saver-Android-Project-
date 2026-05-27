@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_vertical">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đăng Ký Tài Khoản"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#E65100"
+            android:layout_gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Full Name field -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Họ và tên"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edt_fullname_reg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Nhập họ và tên"
+            android:inputType="textPersonName"
+            android:paddingHorizontal="12dp"
+            android:singleLine="true"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Username field -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên đăng nhập"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edt_username_reg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Viết liền, không dấu"
+            android:inputType="text"
+            android:paddingHorizontal="12dp"
+            android:singleLine="true"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Password field -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mật khẩu"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edt_password_reg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Tối thiểu 6 ký tự"
+            android:inputType="textPassword"
+            android:paddingHorizontal="12dp"
+            android:singleLine="true"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Confirm Password field -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xác thực mật khẩu"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/edt_confirm_password_reg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Nhập lại mật khẩu"
+            android:inputType="textPassword"
+            android:paddingHorizontal="12dp"
+            android:singleLine="true"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Đăng ký tài khoản"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tv_btn_goto_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã có tài khoản? Đăng nhập ngay"
+            android:textColor="#E65100"
+            android:layout_gravity="center"
+            android:padding="8dp" />
+
+    </LinearLayout>
+</ScrollView>

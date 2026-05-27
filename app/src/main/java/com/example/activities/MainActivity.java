@@ -45,8 +45,11 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
 
     private TextView tvBalance, tvTotalIncome, tvTotalExpense;
     private EditText edtSearch;
-    private ImageButton btnDarkMode;
+    private ImageButton btnDarkMode, btnLogout;
     private Button btnViewStatistics;
+
+    private String loggedInUser = "guest";
+    private String userFullName = "Thành viên";
     private LinearLayout layoutEmptyState;
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
         tvTotalExpense = findViewById(R.id.tv_total_expense);
         edtSearch = findViewById(R.id.edt_search);
         btnDarkMode = findViewById(R.id.btn_dark_mode);
+        btnLogout = findViewById(R.id.btn_logout);
         btnViewStatistics = findViewById(R.id.btn_view_statistics);
         layoutEmptyState = findViewById(R.id.layout_empty_state);
         recyclerView = findViewById(R.id.recycler_view_transactions);
@@ -119,6 +123,11 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
 
         // Nút Dark Mode
         btnDarkMode.setOnClickListener(v -> toggleDarkMode());
+
+        // Nút Đăng xuất
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> confirmLogout());
+        }
     }
 
     @Override
@@ -128,54 +137,86 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
     }
 
     private void loadAllData() {
-        String queryText = edtSearch.getText().toString().trim();
+        if (dbHelper == null) return;
+
+        // Tải các chỉ số từ cơ sở dữ liệu SQLite theo user đang đăng nhập
+        android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", MODE_PRIVATE);
+        loggedInUser = sharedPrefs.getString("LOGGED_IN_USER", "guest");
+        userFullName = sharedPrefs.getString("USER_FULL_NAME", "Thành viên");
+
+        TextView tvGreeting = findViewById(R.id.tv_greeting);
+        if (tvGreeting != null) {
+            tvGreeting.setText("Xin chào " + userFullName + " ☀️");
+        }
+
+        String queryText = (edtSearch != null) ? edtSearch.getText().toString().trim() : "";
         if (!TextUtils.isEmpty(queryText)) {
             filterTransactions(queryText);
         } else {
-            transactionList = dbHelper.getAllTransactions();
-            adapter.updateList(transactionList);
+            transactionList = dbHelper.getAllTransactions(loggedInUser);
+            if (transactionList == null) {
+                transactionList = new ArrayList<>();
+            }
+            if (adapter != null) {
+                adapter.updateList(transactionList);
+            }
         }
 
-        double totalIncome = dbHelper.getTotalIncome();
-        double totalExpense = dbHelper.getTotalExpense();
+        double totalIncome = dbHelper.getTotalIncome(loggedInUser);
+        double totalExpense = dbHelper.getTotalExpense(loggedInUser);
         double balance = totalIncome - totalExpense;
 
-        tvTotalIncome.setText("+" + formatter.format(totalIncome) + " ₫");
-        tvTotalExpense.setText("-" + formatter.format(totalExpense) + " ₫");
-        tvBalance.setText(formatter.format(balance) + " ₫");
+        if (tvTotalIncome != null) {
+            tvTotalIncome.setText("+" + formatter.format(totalIncome) + " ₫");
+        }
+        if (tvTotalExpense != null) {
+            tvTotalExpense.setText("-" + formatter.format(totalExpense) + " ₫");
+        }
+        if (tvBalance != null) {
+            tvBalance.setText(formatter.format(balance) + " ₫");
+        }
 
-        if (transactionList.isEmpty()) {
-            layoutEmptyState.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            layoutEmptyState.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+        if (layoutEmptyState != null && recyclerView != null) {
+            if (transactionList.isEmpty()) {
+                layoutEmptyState.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                layoutEmptyState.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private void filterTransactions(String keyword) {
+        if (dbHelper == null) return;
         if (TextUtils.isEmpty(keyword)) {
-            transactionList = dbHelper.getAllTransactions();
+            transactionList = dbHelper.getAllTransactions(loggedInUser);
         } else {
-            transactionList = dbHelper.searchTransactions(keyword);
+            transactionList = dbHelper.searchTransactions(keyword, loggedInUser);
         }
-        adapter.updateList(transactionList);
+        if (transactionList == null) {
+            transactionList = new ArrayList<>();
+        }
+        if (adapter != null) {
+            adapter.updateList(transactionList);
+        }
 
-        if (transactionList.isEmpty()) {
-            layoutEmptyState.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            layoutEmptyState.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+        if (layoutEmptyState != null && recyclerView != null) {
+            if (transactionList.isEmpty()) {
+                layoutEmptyState.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                layoutEmptyState.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            loadAllData();
-        }
+        // Load data on any result (ok or cancels - as fallback)
+        loadAllData();
     }
 
     /**
@@ -191,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
             if (which == 0) {
                 // Sửa giao dịch: Gửi sang AddTransactionActivity kèm Object
                 Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-                intent.putExtra("EDIT_TRANSACTION_KEY", transaction);
+                intent.putExtra("TRANSACTION_DATA", transaction);
                 startActivityForResult(intent, REQUEST_CODE_EDIT);
             } else if (which == 1) {
                 // Xác thực và xoá
@@ -234,5 +275,30 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
         } else {
             btnDarkMode.setImageResource(android.R.drawable.ic_menu_compass);
         }
+    }
+
+    private void confirmLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận đăng xuất ⚠️")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản Sun Saver hiện tại?")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    // Xoá session trong SharedPreferences
+                    android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", MODE_PRIVATE);
+                    android.content.SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putBoolean("IS_LOGGED_IN", false);
+                    editor.putString("LOGGED_IN_USER", "guest");
+                    editor.putString("USER_FULL_NAME", "Thành viên");
+                    editor.apply();
+
+                    Toast.makeText(MainActivity.this, "Đã đăng xuất thành công! Hẹn gặp lại bạn. ☀️", Toast.LENGTH_SHORT).show();
+
+                    // Chuyển về màn hình Đăng nhập
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 }

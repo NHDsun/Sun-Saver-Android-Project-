@@ -76,9 +76,13 @@ public class StatisticsActivity extends AppCompatActivity {
     }
 
     private void calculateAndDisplayStatistics() {
-        // Tải các chỉ số từ cơ sở dữ liệu SQLite
-        double totalIncome = dbHelper.getTotalIncome();
-        double totalExpense = dbHelper.getTotalExpense();
+        // TẢI các dữ liệu chỉ định cho người dùng đăng nhập từ SharedPreferences
+        android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", MODE_PRIVATE);
+        String loggedInUser = sharedPrefs.getString("LOGGED_IN_USER", "guest");
+
+        // Tải các chỉ số từ cơ sở dữ liệu SQLite theo user đăng nhập
+        double totalIncome = dbHelper.getTotalIncome(loggedInUser);
+        double totalExpense = dbHelper.getTotalExpense(loggedInUser);
         double balance = totalIncome - totalExpense;
 
         // Định dạng tiền tệ hiển thị cho người học dễ quan sát
@@ -111,7 +115,7 @@ public class StatisticsActivity extends AppCompatActivity {
         // =======================================================
         // TINH TOÁN CHI TIÊU CHO TỪNG PHÂN LOẠI DANH MỤC CHI TIÊU
         // =======================================================
-        List<Transaction> allTransactions = dbHelper.getAllTransactions();
+        List<Transaction> allTransactions = dbHelper.getAllTransactions(loggedInUser);
         
         double foodTotal = 0;
         double studyTotal = 0;

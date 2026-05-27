@@ -13,8 +13,36 @@ public class Transaction implements Serializable {
     private String type; // "Income" (Thu nhập) hoặc "Expense" (Chi tiêu)
     private String category; // "Ăn uống", "Học tập", "Giải trí", "Di chuyển", "Khác"
     private String date; // Định dạng dd/MM/yyyy
+    private String userRef = "guest"; // Thuộc về user nào
 
     public Transaction() {
+    }
+
+    public Transaction(int id, String title, double amount, String type, String category, String date, String userRef) {
+        this.id = id;
+        this.title = title;
+        this.amount = amount;
+        this.type = type;
+        this.category = category;
+        this.date = date;
+        this.userRef = userRef;
+    }
+
+    public Transaction(String title, double amount, String type, String category, String date, String userRef) {
+        this.title = title;
+        this.amount = amount;
+        this.type = type;
+        this.category = category;
+        this.date = date;
+        this.userRef = userRef;
+    }
+
+    public String getUserRef() {
+        return userRef;
+    }
+
+    public void setUserRef(String userRef) {
+        this.userRef = userRef;
     }
 
     public Transaction(int id, String title, double amount, String type, String category, String date) {

@@ -69,11 +69,15 @@
                     android:tint="#FF8C00"
                     android:layout_marginEnd="12dp" />
 
-                <!-- Circular Logo Mini Badge -->
-                <View
+                <!-- Logout Button (Acts as Exit Session) -->
+                <ImageButton
+                    android:id="@+id/btn_logout"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:background="@drawable/ic_sun" />
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:tint="#D50000"
+                    android:contentDescription="Đăng xuất" />
             </LinearLayout>
         </RelativeLayout>
 

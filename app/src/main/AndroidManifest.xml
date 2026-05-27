@@ -23,6 +23,20 @@
             </intent-filter>
         </activity>
 
+        <!-- MÀN HÌNH ĐĂNG NHẬP (LOGIN SCREEN) -->
+        <activity
+            android:name="com.example.activities.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- MÀN HÌNH ĐĂNG KÝ (REGISTER SCREEN) -->
+        <activity
+            android:name="com.example.activities.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyApplication"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- MÀN HÌNH TRANG CHỦ CHÍNH (MAIN ACTIVITY) -->
         <activity
             android:name="com.example.activities.MainActivity"

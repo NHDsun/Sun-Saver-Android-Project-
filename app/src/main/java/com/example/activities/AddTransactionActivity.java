@@ -245,16 +245,23 @@ public class AddTransactionActivity extends AppCompatActivity {
             int result = dbHelper.updateTransaction(existingTransaction);
             if (result > 0) {
                 Toast.makeText(this, "Đã cập nhật giao dịch thành công! ☀️", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
                 finish(); // Đóng màn hình trả về Home
             } else {
                 Toast.makeText(this, "Có lỗi xảy ra, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
             }
         } else {
             // Chế độ THÊM MỚI giao dịch
+            android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", android.content.Context.MODE_PRIVATE);
+            String loggedInUser = sharedPrefs.getString("LOGGED_IN_USER", "guest");
+
             Transaction newTrans = new Transaction(title, amount, type, category, dateStr);
+            newTrans.setUserRef(loggedInUser);
+
             long result = dbHelper.insertTransaction(newTrans);
             if (result > -1) {
                 Toast.makeText(this, "Đã ghi chép giao dịch thành công! ☀️", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
                 finish(); // Đóng màn hình
             } else {
                 Toast.makeText(this, "Không thể lưu giao dịch vào cơ sở dữ liệu!", Toast.LENGTH_SHORT).show();
@@ -276,6 +283,7 @@ public class AddTransactionActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 dbHelper.deleteTransaction(existingTransaction.getId());
                 Toast.makeText(AddTransactionActivity.this, "Đã xoá thành công giao dịch!", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
                 finish(); // Đóng màn hình chỉnh sửa luôn
             }
         });

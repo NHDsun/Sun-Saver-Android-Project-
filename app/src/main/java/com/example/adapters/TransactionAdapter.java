@@ -93,7 +93,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
         holder.tvEmoji.setText(emoji);
 
-        // 6. Nhấn giữ lâu chuyển đổi Sửa/Xoá
+        // 6. Nhấp ngắn hoặc giữ lâu đều mở Sửa/Xoá rất thân thiện
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (longClickListener != null) {
+                    longClickListener.onTransactionLongClick(transaction, holder.getAdapterPosition());
+                }
+            }
+        });
+
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

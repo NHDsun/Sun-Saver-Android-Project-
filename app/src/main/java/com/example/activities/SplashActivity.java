@@ -28,8 +28,16 @@ public class SplashActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Khởi tạo ý định (Intent) chuyển từ Splash sang màn hình chính MainActivity
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                // Kiểm tra xem người dùng đã đăng nhập chưa từ SharedPreferences
+                android.content.SharedPreferences sharedPreferences = getSharedPreferences("SunSaverPrefs", android.content.Context.MODE_PRIVATE);
+                boolean isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false);
+
+                Intent intent;
+                if (isLoggedIn) {
+                    intent = new Intent(SplashActivity.this, MainActivity.class);
+                } else {
+                    intent = new Intent(SplashActivity.this, LoginActivity.class);
+                }
                 startActivity(intent);
                 
                 // Đóng SplashActivity hiện tại để user không thể bấm nút Quay lại (Back) để mở lại Splash
