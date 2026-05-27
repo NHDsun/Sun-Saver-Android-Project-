@@ -63,6 +63,106 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- MẪU GIAO DỊCH NHANH CHỌN MAU -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡 CHỌN NHANH MẪU GIAO DỊCH"
+                android:textColor="@color/text_secondary_light"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:letterSpacing="0.1" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:id="@+id/tpl_food"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_filter_chip_inactive"
+                        android:text="🍔 Ăn trưa 40k"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/tpl_coffee"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_filter_chip_inactive"
+                        android:text="☕ Cà phê 30k"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/tpl_gas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_filter_chip_inactive"
+                        android:text="⛽ Đổ xăng 50k"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/tpl_shopping"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_filter_chip_inactive"
+                        android:text="🛍️ Mua sắm 200k"
+                        android:textColor="@color/text_primary_light"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <TextView
+                        android:id="@+id/tpl_salary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_filter_chip_inactive"
+                        android:text="💵 Lương +3.0M"
+                        android:textColor="@color/color_income"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
             <!-- LOẠI GIAO DỊCH: THU NHẬP / CHI TIÊU TO RÕ -->
             <TextView
                 android:layout_width="wrap_content"
@@ -139,21 +239,40 @@
                         android:textStyle="bold"
                         android:letterSpacing="0.05" />
 
-                    <EditText
-                        android:id="@+id/edt_title"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
                         android:layout_marginTop="6dp"
-                        android:layout_marginBottom="16dp"
-                        android:background="@drawable/bg_input_field"
-                        android:hint="Ví dụ: Ăn cơm trưa, Nhận học bổng..."
-                        android:textColorHint="@color/text_secondary_light"
-                        android:textColor="@color/text_primary_light"
-                        android:textSize="15sp"
-                        android:paddingLeft="14dp"
-                        android:paddingRight="14dp"
-                        android:maxLines="1"
-                        android:inputType="textCapSentences" />
+                        android:layout_marginBottom="16dp">
+
+                        <EditText
+                            android:id="@+id/edt_title"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_input_field"
+                            android:hint="Ví dụ: Ăn cơm trưa, Nhận học bổng..."
+                            android:textColorHint="@color/text_secondary_light"
+                            android:textColor="@color/text_primary_light"
+                            android:textSize="15sp"
+                            android:paddingLeft="14dp"
+                            android:paddingRight="14dp"
+                            android:maxLines="1"
+                            android:inputType="textCapSentences" />
+
+                        <ImageButton
+                            android:id="@+id/btn_voice_title"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_input_field"
+                            android:src="@android:drawable/ic_btn_speak_now"
+                            android:contentDescription="Nhập bằng giọng nói"
+                            android:scaleType="centerInside"
+                            android:tint="@color/text_primary_light" />
+                    </LinearLayout>
 
                     <!-- SỐ TIỀN (VND) -->
                     <TextView
@@ -170,7 +289,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_marginTop="6dp"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="8dp"
                         android:background="@drawable/bg_input_field"
                         android:hint="Nhập số tiền..."
                         android:textColorHint="@color/text_secondary_light"
@@ -181,6 +300,126 @@
                         android:paddingRight="14dp"
                         android:maxLines="1"
                         android:inputType="number" />
+
+                    <!-- QUICK SUGGESTION AMOUNT CHIPS -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:layout_marginBottom="16dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="4dp">
+
+                            <TextView
+                                android:id="@+id/btn_amt_clear"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="✖️ Xoá nhập"
+                                android:textColor="@color/text_secondary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_20k"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+20.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_50k"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+50.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_100k"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+100.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_200k"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+200.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_500k"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+500.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_amt_1m"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="+1.000.000đ"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
 
                     <!-- DANH MỤC PHÂN LOẠI -->
                     <TextView
@@ -224,7 +463,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:layout_marginTop="6dp"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:background="@drawable/bg_input_field"
                         android:focusable="false"
                         android:hint="Chọn ngày..."
@@ -234,6 +473,96 @@
                         android:drawableRight="@android:drawable/ic_menu_my_calendar"
                         android:paddingLeft="14dp"
                         android:paddingRight="14dp" />
+
+                    <!-- QUICK SUGGESTION DATE CHIPS -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingVertical="4dp">
+
+                            <TextView
+                                android:id="@+id/btn_date_today"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="📅 Hôm nay"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_date_yesterday"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="⏳ Hôm qua"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_date_2days"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="⏳ 2 ngày trước"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_date_3days"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="⏳ 3 ngày trước"
+                                android:textColor="@color/text_primary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:layout_marginEnd="6dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                            <TextView
+                                android:id="@+id/btn_date_picker"
+                                android:layout_width="wrap_content"
+                                android:layout_height="32dp"
+                                android:background="@drawable/bg_filter_chip_inactive"
+                                android:text="📆 Lịch khác..."
+                                android:textColor="@color/text_secondary_light"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="10dp"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
 
                 </LinearLayout>
 

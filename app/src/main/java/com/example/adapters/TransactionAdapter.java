@@ -54,7 +54,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
         // 2. Danh mục & Ngày tháng
         holder.tvCategory.setText(transaction.getCategory());
-        holder.tvDate.setText(transaction.getDate());
+        holder.tvDate.setText(getReadableDate(transaction.getDate()));
 
         // 3. Định dạng tiền tệ VND (ví dụ: 150.000 ₫)
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
@@ -77,19 +77,39 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             ));
         }
 
-        // 5. Gán Emoji thương hiệu cho các nhóm danh mục
+        // 5. Gán Emoji thương hiệu tương ứng với bộ nhiều lựa chọn danh mục mới
         String category = transaction.getCategory();
         String emoji = "💰"; // Mặc định
-        if ("Ăn uống".equalsIgnoreCase(category)) {
-            emoji = "🍔";
-        } else if ("Học tập".equalsIgnoreCase(category)) {
-            emoji = "📚";
-        } else if ("Giải trí".equalsIgnoreCase(category)) {
-            emoji = "🎮";
-        } else if ("Di chuyển".equalsIgnoreCase(category)) {
-            emoji = "🚗";
-        } else if ("Khác".equalsIgnoreCase(category)) {
-            emoji = "🪙";
+        if (category != null) {
+            if (category.contains("Ăn uống")) {
+                emoji = "🍔";
+            } else if (category.contains("Học tập")) {
+                emoji = "📚";
+            } else if (category.contains("Giải trí")) {
+                emoji = "🎮";
+            } else if (category.contains("Di chuyển")) {
+                emoji = "🚗";
+            } else if (category.contains("Mua sắm")) {
+                emoji = "🛍️";
+            } else if (category.contains("Điện nước")) {
+                emoji = "⚡";
+            } else if (category.contains("Sức khỏe")) {
+                emoji = "💊";
+            } else if (category.contains("Nhà cửa")) {
+                emoji = "🏠";
+            } else if (category.contains("Lương")) {
+                emoji = "💵";
+            } else if (category.contains("Quà")) {
+                emoji = "🎁";
+            } else if (category.contains("Kinh doanh")) {
+                emoji = "📈";
+            } else if (category.contains("Đầu tư")) {
+                emoji = "📊";
+            } else if (category.contains("Bán đồ")) {
+                emoji = "📦";
+            } else if (category.contains("Khác")) {
+                emoji = "🪙";
+            }
         }
         holder.tvEmoji.setText(emoji);
 
@@ -126,6 +146,51 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     public void updateList(List<Transaction> newList) {
         this.transactionList = newList;
         notifyDataSetChanged();
+    }
+
+    private String getReadableDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return "";
+        }
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+            java.util.Date date = sdf.parse(dateStr);
+            if (date == null) return dateStr;
+
+            java.util.Calendar inputCal = java.util.Calendar.getInstance();
+            inputCal.setTime(date);
+
+            java.util.Calendar todayCal = java.util.Calendar.getInstance();
+            java.util.Calendar yesterdayCal = java.util.Calendar.getInstance();
+            yesterdayCal.add(java.util.Calendar.DAY_OF_YEAR, -1);
+
+            boolean isToday = inputCal.get(java.util.Calendar.YEAR) == todayCal.get(java.util.Calendar.YEAR) &&
+                    inputCal.get(java.util.Calendar.DAY_OF_YEAR) == todayCal.get(java.util.Calendar.DAY_OF_YEAR);
+
+            boolean isYesterday = inputCal.get(java.util.Calendar.YEAR) == yesterdayCal.get(java.util.Calendar.YEAR) &&
+                    inputCal.get(java.util.Calendar.DAY_OF_YEAR) == yesterdayCal.get(java.util.Calendar.DAY_OF_YEAR);
+
+            if (isToday) {
+                return "Hôm nay (" + dateStr + ")";
+            } else if (isYesterday) {
+                return "Hôm qua (" + dateStr + ")";
+            } else {
+                // Lấy thứ trong tuần
+                int dayOfWeek = inputCal.get(java.util.Calendar.DAY_OF_WEEK);
+                String dayName = "Chủ Nhật";
+                switch (dayOfWeek) {
+                    case java.util.Calendar.MONDAY: dayName = "Thứ Hai"; break;
+                    case java.util.Calendar.TUESDAY: dayName = "Thứ Ba"; break;
+                    case java.util.Calendar.WEDNESDAY: dayName = "Thứ Tư"; break;
+                    case java.util.Calendar.THURSDAY: dayName = "Thứ Năm"; break;
+                    case java.util.Calendar.FRIDAY: dayName = "Thứ Sáu"; break;
+                    case java.util.Calendar.SATURDAY: dayName = "Thứ Bảy"; break;
+                }
+                return dayName + " (" + dateStr + ")";
+            }
+        } catch (Exception e) {
+            return dateStr;
+        }
     }
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder {

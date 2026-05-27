@@ -129,14 +129,18 @@ public class StatisticsActivity extends AppCompatActivity {
                 String cat = transaction.getCategory();
                 double amt = transaction.getAmount();
 
-                if ("Ăn uống".equalsIgnoreCase(cat)) {
-                    foodTotal += amt;
-                } else if ("Học tập".equalsIgnoreCase(cat)) {
-                    studyTotal += amt;
-                } else if ("Giải trí".equalsIgnoreCase(cat)) {
-                    entertainmentTotal += amt;
-                } else if ("Di chuyển".equalsIgnoreCase(cat)) {
-                    transportTotal += amt;
+                if (cat != null) {
+                    if (cat.contains("Ăn uống")) {
+                        foodTotal += amt;
+                    } else if (cat.contains("Học tập")) {
+                        studyTotal += amt;
+                    } else if (cat.contains("Giải trí")) {
+                        entertainmentTotal += amt;
+                    } else if (cat.contains("Di chuyển")) {
+                        transportTotal += amt;
+                    } else {
+                        otherTotal += amt;
+                    }
                 } else {
                     otherTotal += amt;
                 }
