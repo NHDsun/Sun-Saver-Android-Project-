@@ -2,112 +2,191 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/bg_light">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center_vertical">
+        android:gravity="center_horizontal">
 
-        <!-- Header -->
+        <!-- Header containing Sun logo (smaller for space efficiency on register screen) -->
+        <FrameLayout
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_sun_logo"
+            android:padding="16dp">
+            
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sun"
+                android:contentDescription="Sun Saver App Logo" />
+        </FrameLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đăng Ký Tài Khoản"
-            android:textSize="24sp"
+            android:text="Tạo Tài Khoản"
+            android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="#E65100"
+            android:textColor="@color/primary"
+            android:fontFamily="sans-serif-black"
             android:layout_gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="4dp" />
 
-        <!-- Full Name field -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Họ và tên"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/edt_fullname_reg"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Nhập họ và tên"
-            android:inputType="textPersonName"
-            android:paddingHorizontal="12dp"
-            android:singleLine="true"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Username field -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tên đăng nhập"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/edt_username_reg"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Viết liền, không dấu"
-            android:inputType="text"
-            android:paddingHorizontal="12dp"
-            android:singleLine="true"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Password field -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mật khẩu"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/edt_password_reg"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Tối thiểu 6 ký tự"
-            android:inputType="textPassword"
-            android:paddingHorizontal="12dp"
-            android:singleLine="true"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Confirm Password field -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Xác thực mật khẩu"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <EditText
-            android:id="@+id/edt_confirm_password_reg"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Nhập lại mật khẩu"
-            android:inputType="textPassword"
-            android:paddingHorizontal="12dp"
-            android:singleLine="true"
+            android:text="Đồng hành cùng gia đình Việt quản lý tài chính"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary_light"
+            android:layout_gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- Buttons -->
-        <Button
-            android:id="@+id/btn_register"
+        <!-- Form Card Container -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Đăng ký tài khoản"
-            android:layout_marginBottom="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_rounded_card"
+            android:padding="24dp"
+            android:elevation="6dp"
+            android:layout_marginBottom="24dp">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ĐĂNG KÝ THÀNH VIÊN"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:letterSpacing="0.05" />
+
+            <!-- Full Name Label & Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Họ và tên"
+                android:textColor="@color/text_primary_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/edt_fullname_reg"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Nhập họ và tên"
+                android:inputType="textPersonName"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary_light"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Username Label & Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tên đăng nhập"
+                android:textColor="@color/text_primary_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/edt_username_reg"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Viết liền, không dấu"
+                android:inputType="text"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary_light"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Password Label & Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mật khẩu"
+                android:textColor="@color/text_primary_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/edt_password_reg"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Tối thiểu 6 ký tự"
+                android:inputType="textPassword"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary_light"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Confirm Password Label & Input -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xác thực mật khẩu"
+                android:textColor="@color/text_primary_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/edt_confirm_password_reg"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Nhập lại mật khẩu"
+                android:inputType="textPassword"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary_light"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:layout_marginBottom="20dp" />
+
+            <!-- Register Button -->
+            <Button
+                android:id="@+id/btn_register"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="ĐĂNG KÝ NGAY"
+                android:backgroundTint="@color/primary"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:elevation="2dp" />
+
+        </LinearLayout>
+
+        <!-- Redirect to Login -->
         <TextView
             android:id="@+id/tv_btn_goto_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Đã có tài khoản? Đăng nhập ngay"
-            android:textColor="#E65100"
+            android:text="Đã có tài khoản? Đăng nhập ngay ☀️"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
             android:layout_gravity="center"
             android:padding="8dp" />
 
