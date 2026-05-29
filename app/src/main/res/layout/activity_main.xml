@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:android:gravity="center"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <!-- Dark Mode Toggle Button (AppCompat DayNight Toggle) -->
