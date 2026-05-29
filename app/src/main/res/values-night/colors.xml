@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Mode Colors -->
-    <color name="bg_light">#121212</color>          <!-- Dark background -->
-    <color name="card_bg_light">#1E1E1E</color>     <!-- Dark slate card background -->
-    <color name="text_primary_light">#ECEFF1</color>
-    <color name="text_secondary_light">#B0BEC5</color>
-    <color name="divider_light">#2C2C2C</color>
+    <!-- Dark Mode Colors - High Contrast Sun Design -->
+    <color name="bg_light">#0F172A</color>          <!-- Deep Navy Slate background -->
+    <color name="card_bg_light">#1E293B</color>     <!-- Lighter slate for cards -->
+    <color name="text_primary_light">#F8FAFC</color> <!-- Almost white for high readability -->
+    <color name="text_secondary_light">#94A3B8</color> <!-- Muted slate for secondary info -->
+    <color name="divider_light">#334155</color>
+
+    <!-- Adjust primary brand color for Dark Mode to be more vibrant -->
+    <color name="primary">#FB923C</color>            <!-- Vibrant Sun Orange (orange-400) -->
+    <!-- Search bar -->
+    <color name="search_bg">#1E293B</color>
+    <color name="search_stroke">#334155</color>
 </resources>

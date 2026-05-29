@@ -373,9 +373,9 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
     private void updateThemeButtonIcon() {
         int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            btnDarkMode.setImageResource(android.R.drawable.btn_star_big_on);
+            btnDarkMode.setImageResource(android.R.drawable.ic_menu_day);
         } else {
-            btnDarkMode.setImageResource(android.R.drawable.ic_menu_compass);
+            btnDarkMode.setImageResource(android.R.drawable.ic_menu_recent_history);
         }
     }
 

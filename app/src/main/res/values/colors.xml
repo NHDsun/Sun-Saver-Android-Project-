@@ -33,4 +33,7 @@
     <color name="color_expense">#DC2626</color>     <!-- Red-600 -->
     <color name="color_income_light">#DCFCE7</color> <!-- Green-100 -->
     <color name="color_expense_light">#FEE2E2</color> <!-- Red-100 -->
+    <!-- Search bar -->
+    <color name="search_bg">#FFF3E0</color>
+    <color name="search_stroke">#FFE0B2</color>
 </resources>
