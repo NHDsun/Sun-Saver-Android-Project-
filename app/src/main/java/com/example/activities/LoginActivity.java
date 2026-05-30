@@ -5,98 +5,84 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.database.DatabaseHelper;
+
+import com.example.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
- * Màn hình Đăng nhập (LoginActivity).
- * Hỗ trợ xác thực các tài khoản được lưu trữ cục bộ trong SQLite DatabaseHelper.
+ * Màn hình Đăng nhập sử dụng Firebase Authentication.
  */
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText edtUsername, edtPassword;
+    private EditText edtEmail, edtPassword;
     private Button btnLogin;
     private TextView tvBtnGotoRegister;
-    private DatabaseHelper dbHelper;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
-        // Ánh xạ layout xml
-        int layoutId = getResources().getIdentifier("activity_login", "layout", getPackageName());
-        setContentView(layoutId);
+        mAuth = FirebaseAuth.getInstance();
 
-        dbHelper = new DatabaseHelper(this);
+        initViews();
 
-        // Ánh xạ view
-        String pkg = getPackageName();
-        edtUsername = findViewById(getResources().getIdentifier("edt_username", "id", pkg));
-        edtPassword = findViewById(getResources().getIdentifier("edt_password", "id", pkg));
-        btnLogin = findViewById(getResources().getIdentifier("btn_login", "id", pkg));
-        tvBtnGotoRegister = findViewById(getResources().getIdentifier("tv_btn_goto_register", "id", pkg));
-
-        // Nút bấm đăng nhập
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performLogin();
-            }
-        });
-
-        // Đi tới trang đăng ký
-        tvBtnGotoRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
+        btnLogin.setOnClickListener(v -> performLogin());
+        tvBtnGotoRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 
+    private void initViews() {
+        edtEmail = findViewById(R.id.edt_username); // Layout vẫn dùng id edt_username nhưng ta nhập email
+        edtPassword = findViewById(R.id.edt_password);
+        btnLogin = findViewById(R.id.btn_login);
+        tvBtnGotoRegister = findViewById(R.id.tv_btn_goto_register);
+    }
+
     private void performLogin() {
-        String username = edtUsername.getText().toString().trim();
+        String email = edtEmail.getText().toString().trim();
         String password = edtPassword.getText().toString().trim();
 
-        // Kiểm tra hợp lệ các trường đầu vào
-        if (TextUtils.isEmpty(username)) {
-            edtUsername.setError("Tên đăng nhập không được để trống!");
-            edtUsername.requestFocus();
+        if (TextUtils.isEmpty(email)) {
+            edtEmail.setError("Email không được để trống!");
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
             edtPassword.setError("Mật khẩu không được để trống!");
-            edtPassword.requestFocus();
             return;
         }
 
-        // Xác thực đăng nhập qua database
-        boolean authenticate = dbHelper.checkLogin(username, password);
-        if (authenticate) {
-            String fullName = dbHelper.getUserFullName(username);
-            
-            // Lưu trạng thái đăng nhập vào SharedPreferences
-            SharedPreferences sharedPreferences = getSharedPreferences("SunSaverPrefs", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("IS_LOGGED_IN", true);
-            editor.putString("LOGGED_IN_USER", username);
-            editor.putString("USER_FULL_NAME", fullName);
-            editor.apply();
+        // Đăng nhập Firebase
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            // Cập nhật SharedPreferences để duy trì tính tương thích với code cũ nếu cần
+                            SharedPreferences sharedPreferences = getSharedPreferences("SunSaverPrefs", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean("IS_LOGGED_IN", true);
+                            editor.putString("LOGGED_IN_USER", user.getUid()); // Sử dụng UID làm user_ref
+                            editor.putString("USER_FULL_NAME", user.getDisplayName());
+                            editor.apply();
 
-            Toast.makeText(this, "Chào mừng " + fullName + " quay lại với Sun Saver! ☀️", Toast.LENGTH_SHORT).show();
-
-            // Đi tới trang chủ chính
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Tên đăng nhập hoặc mật khẩu chưa chính xác! ☀️", Toast.LENGTH_LONG).show();
-        }
+                            Toast.makeText(LoginActivity.this, "Chào mừng " + user.getDisplayName() + "! ☀️", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Đăng nhập thất bại: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

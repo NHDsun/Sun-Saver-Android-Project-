@@ -1,31 +1,23 @@
 package com.example.models;
 
+import com.google.firebase.firestore.Exclude;
 import java.io.Serializable;
 
 /**
  * Model class đại diện cho một giao dịch tài chính (Thu nhập hoặc Chi tiêu).
- * Đạt chuẩn dễ học, dễ nhớ cho sinh viên nghiên cứu Android cơ bản.
+ * Đã cập nhật để tương thích với Firebase Firestore.
  */
 public class Transaction implements Serializable {
-    private int id;
+    private String id; // Sử dụng String cho Firestore Document ID
     private String title;
     private double amount;
-    private String type; // "Income" (Thu nhập) hoặc "Expense" (Chi tiêu)
-    private String category; // "Ăn uống", "Học tập", "Giải trí", "Di chuyển", "Khác"
-    private String date; // Định dạng dd/MM/yyyy
-    private String userRef = "guest"; // Thuộc về user nào
+    private String type; // "Income" hoặc "Expense"
+    private String category;
+    private String date;
+    private String userRef;
 
     public Transaction() {
-    }
-
-    public Transaction(int id, String title, double amount, String type, String category, String date, String userRef) {
-        this.id = id;
-        this.title = title;
-        this.amount = amount;
-        this.type = type;
-        this.category = category;
-        this.date = date;
-        this.userRef = userRef;
+        // Constructor rỗng cần thiết cho Firebase
     }
 
     public Transaction(String title, double amount, String type, String category, String date, String userRef) {
@@ -37,36 +29,12 @@ public class Transaction implements Serializable {
         this.userRef = userRef;
     }
 
-    public String getUserRef() {
-        return userRef;
-    }
-
-    public void setUserRef(String userRef) {
-        this.userRef = userRef;
-    }
-
-    public Transaction(int id, String title, double amount, String type, String category, String date) {
-        this.id = id;
-        this.title = title;
-        this.amount = amount;
-        this.type = type;
-        this.category = category;
-        this.date = date;
-    }
-
-    public Transaction(String title, double amount, String type, String category, String date) {
-        this.title = title;
-        this.amount = amount;
-        this.type = type;
-        this.category = category;
-        this.date = date;
-    }
-
-    public int getId() {
+    @Exclude
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -108,5 +76,13 @@ public class Transaction implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getUserRef() {
+        return userRef;
+    }
+
+    public void setUserRef(String userRef) {
+        this.userRef = userRef;
     }
 }

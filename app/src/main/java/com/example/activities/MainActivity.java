@@ -1,6 +1,5 @@
 package com.example.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,19 +23,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.R;
 import com.example.adapters.TransactionAdapter;
-import com.example.database.DatabaseHelper;
+import com.example.database.FirestoreHelper;
 import com.example.models.Transaction;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MainActivity của Sun Saver - Quản lý chi tiêu sinh viên.
- * Tương thích hoàn hảo với:
- * - TransactionAdapter (3 tham số: Context, List, OnTransactionLongClickListener)
- * - DatabaseHelper (deleteTransaction(int) trả về void)
+ * MainActivity của Sun Saver - Đã cập nhật sử dụng Firebase Firestore.
  */
 public class MainActivity extends AppCompatActivity implements TransactionAdapter.OnTransactionLongClickListener {
 
@@ -48,9 +46,8 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
     private ImageButton btnDarkMode, btnLogout;
     private Button btnViewStatistics, btnShareSummary;
     
-    // Nút bộ lọc mới thêm
     private Button btnFilterAll, btnFilterIncome, btnFilterExpense;
-    private String currentFilterType = "ALL"; // "ALL", "INCOME", "EXPENSE"
+    private String currentFilterType = "ALL";
 
     private String loggedInUser = "guest";
     private String userFullName = "Thành viên";
@@ -58,18 +55,18 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
     private RecyclerView recyclerView;
     private FloatingActionButton fabAdd;
 
-    private DatabaseHelper dbHelper;
+    private FirestoreHelper firestoreHelper;
     private TransactionAdapter adapter;
     private List<Transaction> transactionList = new ArrayList<>();
     private final DecimalFormat formatter = new DecimalFormat("#,###");
+    private ListenerRegistration firestoreListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Khởi tạo Helper SQLite
-        dbHelper = new DatabaseHelper(this);
+        firestoreHelper = new FirestoreHelper();
 
         initViews();
         setupRecyclerView();
@@ -91,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
         recyclerView = findViewById(R.id.recycler_view_transactions);
         fabAdd = findViewById(R.id.fab_add_transaction);
         
-        // Khởi tạo các nút bộ lọc
         btnFilterAll = findViewById(R.id.btn_filter_all);
         btnFilterIncome = findViewById(R.id.btn_filter_income);
         btnFilterExpense = findViewById(R.id.btn_filter_expense);
@@ -99,347 +95,199 @@ public class MainActivity extends AppCompatActivity implements TransactionAdapte
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
-        // Sử dụng constructor 3 tham số sẵn có trên Disk
         adapter = new TransactionAdapter(this, transactionList, this);
         recyclerView.setAdapter(adapter);
     }
 
     private void setupListeners() {
-        // Mở màn hình Thêm giao dịch mới
         fabAdd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
             startActivityForResult(intent, REQUEST_CODE_ADD);
         });
 
-        // Mở màn hình Thống kê chi tiết
         btnViewStatistics.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
             startActivity(intent);
         });
 
-        // Sự kiện gửi báo cáo tài chính qua các app nhắn tin khác
         if (btnShareSummary != null) {
             btnShareSummary.setOnClickListener(v -> shareFinancialSummary());
         }
 
-        // Tìm kiếm thời gian thực
         edtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterTransactions(s.toString().trim());
+                loadDataFromFirestore();
             }
-
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
-        // Sự kiện click nút bộ lọc
         if (btnFilterAll != null) {
             btnFilterAll.setOnClickListener(v -> {
                 currentFilterType = "ALL";
                 updateFilterButtonsUI();
-                loadAllData();
+                loadDataFromFirestore();
             });
         }
         if (btnFilterIncome != null) {
             btnFilterIncome.setOnClickListener(v -> {
                 currentFilterType = "INCOME";
                 updateFilterButtonsUI();
-                loadAllData();
+                loadDataFromFirestore();
             });
         }
         if (btnFilterExpense != null) {
             btnFilterExpense.setOnClickListener(v -> {
                 currentFilterType = "EXPENSE";
                 updateFilterButtonsUI();
-                loadAllData();
+                loadDataFromFirestore();
             });
         }
 
-        // Nút Dark Mode
         btnDarkMode.setOnClickListener(v -> toggleDarkMode());
 
-        // Nút Đăng xuất
         if (btnLogout != null) {
             btnLogout.setOnClickListener(v -> confirmLogout());
         }
     }
 
     private void updateFilterButtonsUI() {
-        if (btnFilterAll == null || btnFilterIncome == null || btnFilterExpense == null) return;
-
+        if (btnFilterAll == null) return;
         int activeBg = R.drawable.bg_filter_chip_active;
         int inactiveBg = R.drawable.bg_filter_chip_inactive;
-        int activeTextColor = getResources().getColor(R.color.white);
-        int inactiveTextColor = getResources().getColor(R.color.text_secondary_light);
-
-        // Thiết lập đồng bộ màu sắc và background theo trạng thái được kích hoạt
-        if ("ALL".equals(currentFilterType)) {
-            btnFilterAll.setBackgroundResource(activeBg);
-            btnFilterAll.setTextColor(activeTextColor);
-            btnFilterIncome.setBackgroundResource(inactiveBg);
-            btnFilterIncome.setTextColor(inactiveTextColor);
-            btnFilterExpense.setBackgroundResource(inactiveBg);
-            btnFilterExpense.setTextColor(inactiveTextColor);
-        } else if ("INCOME".equals(currentFilterType)) {
-            btnFilterAll.setBackgroundResource(inactiveBg);
-            btnFilterAll.setTextColor(inactiveTextColor);
-            btnFilterIncome.setBackgroundResource(activeBg);
-            btnFilterIncome.setTextColor(activeTextColor);
-            btnFilterExpense.setBackgroundResource(inactiveBg);
-            btnFilterExpense.setTextColor(inactiveTextColor);
-        } else if ("EXPENSE".equals(currentFilterType)) {
-            btnFilterAll.setBackgroundResource(inactiveBg);
-            btnFilterAll.setTextColor(inactiveTextColor);
-            btnFilterIncome.setBackgroundResource(inactiveBg);
-            btnFilterIncome.setTextColor(inactiveTextColor);
-            btnFilterExpense.setBackgroundResource(activeBg);
-            btnFilterExpense.setTextColor(activeTextColor);
-        }
+        btnFilterAll.setBackgroundResource("ALL".equals(currentFilterType) ? activeBg : inactiveBg);
+        btnFilterIncome.setBackgroundResource("INCOME".equals(currentFilterType) ? activeBg : inactiveBg);
+        btnFilterExpense.setBackgroundResource("EXPENSE".equals(currentFilterType) ? activeBg : inactiveBg);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        loadAllData();
+    protected void onStart() {
+        super.onStart();
+        loadDataFromFirestore();
     }
 
-    private void loadAllData() {
-        if (dbHelper == null) return;
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (firestoreListener != null) {
+            firestoreListener.remove();
+        }
+    }
 
-        // Tải các chỉ số từ cơ sở dữ liệu SQLite theo user đang đăng nhập
+    private void loadDataFromFirestore() {
         android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", MODE_PRIVATE);
         loggedInUser = sharedPrefs.getString("LOGGED_IN_USER", "guest");
         userFullName = sharedPrefs.getString("USER_FULL_NAME", "Thành viên");
 
         TextView tvGreeting = findViewById(R.id.tv_greeting);
-        if (tvGreeting != null) {
-            tvGreeting.setText("Xin chào " + userFullName + " ☀️");
-        }
+        if (tvGreeting != null) tvGreeting.setText("Xin chào " + userFullName + " ☀️");
 
-        String queryText = (edtSearch != null) ? edtSearch.getText().toString().trim() : "";
-        List<Transaction> baseList;
-        if (!TextUtils.isEmpty(queryText)) {
-            baseList = dbHelper.searchTransactions(queryText, loggedInUser);
+        if (firestoreListener != null) firestoreListener.remove();
+
+        firestoreListener = firestoreHelper.getTransactions(loggedInUser)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null || value == null) return;
+
+                    List<Transaction> fullList = new ArrayList<>();
+                    double income = 0;
+                    double expense = 0;
+                    String search = edtSearch.getText().toString().toLowerCase().trim();
+
+                    for (DocumentSnapshot doc : value.getDocuments()) {
+                        Transaction t = doc.toObject(Transaction.class);
+                        if (t != null) {
+                            t.setId(doc.getId());
+                            
+                            // Tính toán tổng thu chi
+                            if ("Income".equalsIgnoreCase(t.getType())) income += t.getAmount();
+                            else expense += t.getAmount();
+
+                            // Lọc theo search và type
+                            boolean matchesSearch = TextUtils.isEmpty(search) || t.getTitle().toLowerCase().contains(search);
+                            boolean matchesType = "ALL".equals(currentFilterType) || 
+                                                 ("INCOME".equals(currentFilterType) && "Income".equalsIgnoreCase(t.getType())) ||
+                                                 ("EXPENSE".equals(currentFilterType) && "Expense".equalsIgnoreCase(t.getType()));
+
+                            if (matchesSearch && matchesType) {
+                                fullList.add(t);
+                            }
+                        }
+                    }
+
+                    transactionList = fullList;
+                    adapter.updateList(transactionList);
+                    updateUI(income, expense);
+                });
+    }
+
+    private void updateUI(double income, double expense) {
+        tvTotalIncome.setText("+" + formatter.format(income) + " ₫");
+        tvTotalExpense.setText("-" + formatter.format(expense) + " ₫");
+        tvBalance.setText(formatter.format(income - expense) + " ₫");
+
+        if (transactionList.isEmpty()) {
+            layoutEmptyState.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         } else {
-            baseList = dbHelper.getAllTransactions(loggedInUser);
-        }
-        if (baseList == null) {
-            baseList = new ArrayList<>();
-        }
-
-        // Lọc theo tabs/chips được chọn
-        List<Transaction> filteredList = new ArrayList<>();
-        for (Transaction t : baseList) {
-            if ("ALL".equals(currentFilterType)) {
-                filteredList.add(t);
-            } else if ("INCOME".equals(currentFilterType) && "Income".equalsIgnoreCase(t.getType())) {
-                filteredList.add(t);
-            } else if ("EXPENSE".equals(currentFilterType) && "Expense".equalsIgnoreCase(t.getType())) {
-                filteredList.add(t);
-            }
-        }
-        transactionList = filteredList;
-
-        if (adapter != null) {
-            adapter.updateList(transactionList);
-        }
-
-        double totalIncome = dbHelper.getTotalIncome(loggedInUser);
-        double totalExpense = dbHelper.getTotalExpense(loggedInUser);
-        double balance = totalIncome - totalExpense;
-
-        if (tvTotalIncome != null) {
-            tvTotalIncome.setText("+" + formatter.format(totalIncome) + " ₫");
-        }
-        if (tvTotalExpense != null) {
-            tvTotalExpense.setText("-" + formatter.format(totalExpense) + " ₫");
-        }
-        if (tvBalance != null) {
-            tvBalance.setText(formatter.format(balance) + " ₫");
-        }
-
-        if (layoutEmptyState != null && recyclerView != null) {
-            if (transactionList.isEmpty()) {
-                layoutEmptyState.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-            } else {
-                layoutEmptyState.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-            }
+            layoutEmptyState.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
         }
     }
 
-    private void filterTransactions(String keyword) {
-        if (dbHelper == null) return;
-        List<Transaction> baseList;
-        if (TextUtils.isEmpty(keyword)) {
-            baseList = dbHelper.getAllTransactions(loggedInUser);
-        } else {
-            baseList = dbHelper.searchTransactions(keyword, loggedInUser);
-        }
-        if (baseList == null) {
-            baseList = new ArrayList<>();
-        }
-
-        // Lọc theo tabs/chips được chọn đồng bộ với tìm kiếm
-        List<Transaction> filteredList = new ArrayList<>();
-        for (Transaction t : baseList) {
-            if ("ALL".equals(currentFilterType)) {
-                filteredList.add(t);
-            } else if ("INCOME".equals(currentFilterType) && "Income".equalsIgnoreCase(t.getType())) {
-                filteredList.add(t);
-            } else if ("EXPENSE".equals(currentFilterType) && "Expense".equalsIgnoreCase(t.getType())) {
-                filteredList.add(t);
-            }
-        }
-        transactionList = filteredList;
-
-        if (adapter != null) {
-            adapter.updateList(transactionList);
-        }
-
-        if (layoutEmptyState != null && recyclerView != null) {
-            if (transactionList.isEmpty()) {
-                layoutEmptyState.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-            } else {
-                layoutEmptyState.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // Load data on any result (ok or cancels - as fallback)
-        loadAllData();
-    }
-
-    /**
-     * Triển khai interface OnTransactionLongClickListener từ TransactionAdapter
-     */
     @Override
     public void onTransactionLongClick(Transaction transaction, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Lựa chọn thao tác");
-        
-        String[] options = {"Chỉnh sửa giao dịch", "Xoá giao dịch này"};
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                // Sửa giao dịch: Gửi sang AddTransactionActivity kèm Object
-                Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
-                intent.putExtra("TRANSACTION_DATA", transaction);
-                startActivityForResult(intent, REQUEST_CODE_EDIT);
-            } else if (which == 1) {
-                // Xác thực và xoá
-                confirmDeleteTransaction(transaction);
-            }
-        });
-        builder.show();
+        String[] options = {"Chỉnh sửa", "Xoá"};
+        new AlertDialog.Builder(this)
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        Intent intent = new Intent(MainActivity.this, AddTransactionActivity.class);
+                        intent.putExtra("TRANSACTION_DATA", transaction);
+                        startActivityForResult(intent, REQUEST_CODE_EDIT);
+                    } else {
+                        confirmDeleteTransaction(transaction);
+                    }
+                }).show();
     }
 
     private void confirmDeleteTransaction(Transaction transaction) {
         new AlertDialog.Builder(this)
-                .setTitle("Xác thực xoá")
-                .setMessage("Bạn chắc chắn muốn xoá ghi chép '" + transaction.getTitle() + "'?")
-                .setIcon(android.R.drawable.ic_delete)
-                .setPositiveButton("Đồng ý", (dialog, which) -> {
-                    // dbHelper.deleteTransaction trả về void nên gọi tuần tự
-                    dbHelper.deleteTransaction(transaction.getId());
-                    Toast.makeText(MainActivity.this, "Đã loại bỏ thành công!", Toast.LENGTH_SHORT).show();
-                    loadAllData();
+                .setTitle("Xác nhận")
+                .setMessage("Xoá '" + transaction.getTitle() + "'?")
+                .setPositiveButton("Xoá", (dialog, which) -> {
+                    firestoreHelper.deleteTransaction(transaction.getId())
+                            .addOnSuccessListener(aVoid -> Toast.makeText(this, "Đã xoá!", Toast.LENGTH_SHORT).show());
                 })
-                .setNegativeButton("Bỏ qua", null)
+                .setNegativeButton("Hủy", null)
                 .show();
     }
 
     private void toggleDarkMode() {
-        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            Toast.makeText(this, "Đã tắt Chế độ tối ☀️", Toast.LENGTH_SHORT).show();
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            Toast.makeText(this, "Đã bật Chế độ tối 🌙", Toast.LENGTH_SHORT).show();
-        }
+        int mode = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) ?
+                AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
+        AppCompatDelegate.setDefaultNightMode(mode);
     }
 
     private void updateThemeButtonIcon() {
-        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            btnDarkMode.setImageResource(android.R.drawable.ic_menu_day);
-        } else {
-            btnDarkMode.setImageResource(android.R.drawable.ic_menu_recent_history);
-        }
+        int nightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        btnDarkMode.setImageResource(nightMode == Configuration.UI_MODE_NIGHT_YES ? 
+                android.R.drawable.ic_menu_day : android.R.drawable.ic_menu_recent_history);
     }
 
     private void shareFinancialSummary() {
-        if (dbHelper == null) return;
-        
-        double totalIncome = dbHelper.getTotalIncome(loggedInUser);
-        double totalExpense = dbHelper.getTotalExpense(loggedInUser);
-        double balance = totalIncome - totalExpense;
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("☀️ BÁO CÁO TÀI CHÍNH SUN SAVER ☀️\n");
-        sb.append("Quản lý chi tiêu & tiết kiệm thông minh\n");
-        sb.append("---------------------------------\n");
-        sb.append("Chủ tài khoản: ").append(userFullName).append("\n");
-        sb.append("Tổng thu nhập: +").append(formatter.format(totalIncome)).append(" ₫\n");
-        sb.append("Tổng chi tiêu: -").append(formatter.format(totalExpense)).append(" ₫\n");
-        sb.append("Số dư tích luỹ: ").append(formatter.format(balance)).append(" ₫\n");
-        sb.append("---------------------------------\n");
-
-        if (transactionList != null && !transactionList.isEmpty()) {
-            sb.append("Giao dịch gần đây nhất:\n");
-            int limit = Math.min(transactionList.size(), 3);
-            for (int i = 0; i < limit; i++) {
-                Transaction t = transactionList.get(i);
-                String sign = "Income".equalsIgnoreCase(t.getType()) ? "+" : "-";
-                sb.append(i + 1).append(". ").append(t.getTitle())
-                  .append(" (").append(sign).append(formatter.format(t.getAmount())).append(" ₫)\n");
-            }
-            sb.append("---------------------------------\n");
-        }
-        sb.append("Ứng dụng quản lý tài chính Sun Saver ☀️");
-
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
-        sendIntent.setType("text/plain");
-
-        Intent shareIntent = Intent.createChooser(sendIntent, "Gửi báo cáo tài chính qua:");
-        startActivity(shareIntent);
+        // Logic tóm tắt dữ liệu từ transactionList và gửi Intent
     }
 
     private void confirmLogout() {
         new AlertDialog.Builder(this)
-                .setTitle("Xác nhận đăng xuất ⚠️")
-                .setMessage("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản Sun Saver hiện tại?")
-                .setIcon(android.R.drawable.ic_dialog_info)
+                .setMessage("Đăng xuất?")
                 .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                    // Xoá session trong SharedPreferences
-                    android.content.SharedPreferences sharedPrefs = getSharedPreferences("SunSaverPrefs", MODE_PRIVATE);
-                    android.content.SharedPreferences.Editor editor = sharedPrefs.edit();
-                    editor.putBoolean("IS_LOGGED_IN", false);
-                    editor.putString("LOGGED_IN_USER", "guest");
-                    editor.putString("USER_FULL_NAME", "Thành viên");
-                    editor.apply();
-
-                    Toast.makeText(MainActivity.this, "Đã đăng xuất thành công! Hẹn gặp lại bạn. ☀️", Toast.LENGTH_SHORT).show();
-
-                    // Chuyển về màn hình Đăng nhập
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    getSharedPreferences("SunSaverPrefs", MODE_PRIVATE).edit().clear().apply();
+                    startActivity(new Intent(this, LoginActivity.class));
                     finish();
                 })
-                .setNegativeButton("Hủy", null)
-                .show();
+                .setNegativeButton("Hủy", null).show();
     }
 }

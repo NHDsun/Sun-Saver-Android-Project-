@@ -6,43 +6,36 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 /**
  * Màn hình chào mừng (Splash Screen).
- * Hiển thị logo Sun Saver trong 2 giây rồi tự động chuyển sang Màn hình chính (Home).
+ * Đã cập nhật để kiểm tra trạng thái đăng nhập từ Firebase Auth.
  */
 public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Áp dụng theme splash screen đặc biệt từ resources
-        int themeSplash = getResources().getIdentifier("Theme.MyApplication.Splash", "style", getPackageName());
-        setTheme(themeSplash);
-        
         super.onCreate(savedInstanceState);
-        
-        // Gán layout màn hình splash
-        int layoutSplash = getResources().getIdentifier("activity_splash", "layout", getPackageName());
-        setContentView(layoutSplash);
+        setContentView(R.layout.activity_splash);
 
-        // Sử dụng Handler để trì hoãn chuyển cảnh đi 2000 mili giây (2 giây)
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Kiểm tra xem người dùng đã đăng nhập chưa từ SharedPreferences
-                android.content.SharedPreferences sharedPreferences = getSharedPreferences("SunSaverPrefs", android.content.Context.MODE_PRIVATE);
-                boolean isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false);
+        // Sử dụng Handler để trì hoãn chuyển cảnh đi 2 giây
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // Kiểm tra trạng thái đăng nhập trực tiếp từ Firebase
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent intent;
-                if (isLoggedIn) {
-                    intent = new Intent(SplashActivity.this, MainActivity.class);
-                } else {
-                    intent = new Intent(SplashActivity.this, LoginActivity.class);
-                }
-                startActivity(intent);
-                
-                // Đóng SplashActivity hiện tại để user không thể bấm nút Quay lại (Back) để mở lại Splash
-                finish();
+            Intent intent;
+            if (currentUser != null) {
+                // Đã đăng nhập -> Vào thẳng màn hình chính
+                intent = new Intent(SplashActivity.this, MainActivity.class);
+            } else {
+                // Chưa đăng nhập -> Chuyển sang màn hình Đăng nhập
+                intent = new Intent(SplashActivity.this, LoginActivity.class);
             }
+            startActivity(intent);
+            finish();
         }, 2000);
     }
 }
